@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Map - RoadResQ</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <header class="container">
+    <div class="brand"><span class="brand-badge"></span>RoadResQ</div>
+    <nav>
+      <button id="navToggle" class="nav-toggle">☰</button>
+      <div id="navLinks" class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="report.html">Report</a>
+        <a href="map.html">Map</a>
+        <a href="admin.html">Admin</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+      </div>
+    </nav>
+  </header>
+  <main class="container">
+    <div class="card">
+      <div class="grid">
+        <select id="filterCategory">
+          <option value="">All Categories</option>
+          <option value="pothole">Pothole</option>
+          <option value="drain">Open Drain</option>
+          <option value="streetlight">Broken Streetlight</option>
+          <option value="other">Other</option>
+        </select>
+        <select id="filterStatus">
+          <option value="">All Statuses</option>
+          <option>Pending</option>
+          <option>In Progress</option>
+          <option>Resolved</option>
+        </select>
+        <button id="refreshBtn" class="button">Refresh</button>
+      </div>
+      <div id="map" style="height: 70vh; width: 100%; margin-top: 1rem;"></div>
+    </div>
+  </main>
+  <footer class="container footer">
+    RoadResQ · Built for citizen safety · © 2025
+  </footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
+
+

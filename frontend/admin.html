@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - RoadResQ</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <style>
+    /* ---- GENERAL ---- */
+    body {
+      font-family: system-ui, sans-serif;
+    }
+
+    /* ---- LOGIN CARD ---- */
+    #loginCard {
+      max-width: 420px;
+      margin: 3rem auto;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      background: var(--card-bg);
+    }
+
+    #loginCard form label {
+      display: block;
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    #loginCard input {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 0.3rem;
+    }
+
+    #loginCard button {
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    #loginMsg {
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    .captcha-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      letter-spacing: 3px;
+      font-size: 1.2rem;
+      user-select: none;
+      margin: 0.8rem 0;
+    }
+
+    /* ---- ADMIN DASHBOARD ---- */
+    .admin-dashboard {
+      max-width: 1100px;
+      margin: 2rem auto 4rem auto;
+      padding: 2rem;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .admin-dashboard h2 {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Summary Cards */
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      justify-items: center;
+    }
+
+    .summary-card {
+      border-radius: 16px;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      color: #fff;
+      width: 100%;
+      max-width: 250px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s ease;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .summary-card.total {
+      background: linear-gradient(135deg, #032368, #588ee5);
+    }
+
+    .summary-card.active {
+      background: linear-gradient(135deg, #ec9706, #efd28b);
+    }
+
+    .summary-card.resolved {
+      background: linear-gradient(135deg, #02fb5d, #94f3b7);
+    }
+
+    .summary-card h3 {
+      font-size: 2rem;
+      margin-bottom: 0.4rem;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-input,
+    .filter-select {
+      padding: 0.7rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .reload-btn {
+      background: var(--accent);
+      color: #fff;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .reload-btn:hover {
+      background: #2563eb;
+    }
+
+    /* Table */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .hazard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .hazard-table thead {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .hazard-table th,
+    .hazard-table td {
+      padding: 0.9rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hazard-table tbody tr:nth-child(even) {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .hazard-table tbody tr:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .status-badge.pending {
+      background: #dc2626;
+    }
+
+    .status-badge.in-progress {
+      background: #f59e0b;
+    }
+
+    .status-badge.resolved {
+      background: #16a34a;
+    }
+
+    /* Fix for Action column layout */
+.hazard-table td:last-child {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem; /* space between dropdown & button */
+}
+
+/* Make the dropdown and button align cleanly */
+.statusSel {
+  width: 100%;
+  max-width: 150px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+/* Make Update button consistent and centered */
+.hazard-table .button.small {
+  align-self: flex-start;
+  background: #f97316;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hazard-table .button.small:hover {
+  background: #ea580c;
+  transform: translateY(-2px);
+}
+
+  </style>
+</head>
+
+<body>
+  <header class="container">
+    <div class="brand"><span class="brand-badge"></span>RoadResQ</div>
+    <nav>
+      <button id="navToggle" class="nav-toggle">☰</button>
+      <div id="navLinks" class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="report.html">Report</a>
+        <a href="map.html">Map</a>
+        <a href="admin.html" class="active">Admin</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Login Box -->
+    <section class="card" id="loginCard">
+      <h2>Admin Login</h2>
+      <form id="loginForm">
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" required />
+        </label>
+
+        <!-- CAPTCHA -->
+        <div class="captcha-box">
+          <span id="captchaText"></span>
+          <button type="button" id="refreshCaptcha" class="button small" style="width:auto;">↻</button>
+        </div>
+        <label>
+          <span>Enter Captcha</span>
+          <input type="text" id="captchaInput" required placeholder="Enter the text above" />
+        </label>
+
+        <button class="button" type="submit">Login</button>
+        <p id="loginMsg"></p>
+      </form>
+    </section>
+
+    <!-- Admin Dashboard -->
+    <section class="card admin-dashboard" id="adminCard" style="display:none;">
+      <h2>⚙️ Admin Dashboard</h2>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card total">
+          <h3 id="adminTotal">0</h3>
+          <p>Total Reports</p>
+        </div>
+        <div class="summary-card active">
+          <h3 id="adminActive">0</h3>
+          <p>Active Hazards</p>
+        </div>
+        <div class="summary-card resolved">
+          <h3 id="adminResolved">0</h3>
+          <p>Resolved</p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <input id="search" class="filter-input" placeholder="🔍 Search description..." />
+        <select id="adminFilterStatus" class="filter-select">
+          <option value="">All Statuses</option>
+          <option>Pending</option>
+          <option>In Progress</option>
+          <option>Resolved</option>
+        </select>
+        <button id="reload" class="button reload-btn">🔄 Reload</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="hazard-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="hazardTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container footer">
+    RoadResQ · Built for citizen safety · © 2025
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+
+  <!-- Captcha Script -->
+  <script>
+    function generateCaptcha() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      document.getElementById('captchaText').textContent = code;
+      return code;
+    }
+
+    let currentCaptcha = generateCaptcha();
+    document.getElementById('refreshCaptcha').addEventListener('click', () => {
+      currentCaptcha = generateCaptcha();
+    });
+
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', (e) => {
+      const input = document.getElementById('captchaInput').value.trim().toUpperCase();
+      if (input !== currentCaptcha) {
+        e.preventDefault();
+        document.getElementById('loginMsg').textContent = '⚠️ Incorrect captcha. Please try again.';
+        document.getElementById('loginMsg').style.color = '#f87171';
+        currentCaptcha = generateCaptcha();
+        document.getElementById('captchaInput').value = '';
+        return false;
+      }
+    });
+  </script>
+
+  <!-- Dashboard Count Script -->
+  <script>
+    async function updateAdminCounts() {
+      try {
+        const res = await fetch(`${window.API_BASE}/api/hazard/reports`);
+        const data = await res.json();
+
+        const total = data.length;
+        const resolved = data.filter(h => h.status === 'Resolved').length;
+        const active = total - resolved;
+
+        document.getElementById('adminTotal').textContent = total;
+        document.getElementById('adminResolved').textContent = resolved;
+        document.getElementById('adminActive').textContent = active;
+      } catch (err) {
+        console.error('Failed to load counts:', err);
+      }
+    }
+
+    // Automatically update counts every 10 seconds when dashboard is visible
+    setInterval(() => {
+      const adminCard = document.getElementById('adminCard');
+      if (adminCard.style.display !== 'none') updateAdminCounts();
+    }, 10000);
+  </script>
+</body>
+</html>
+
+
+

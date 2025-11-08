@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoadResQ</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="container">
+    <div class="brand"><span class="brand-badge"></span>RoadResQ</div>
+    <nav>
+      <button id="navToggle" class="nav-toggle">☰</button>
+      <div id="navLinks" class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="report.html">Report</a>
+        <a href="map.html">Map</a>
+        <a href="admin.html">Admin</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+      </div>
+    </nav>
+  </header>
+  <main class="container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Report Road Hazards in Your Area</h2>
+    <p>Empower safety, foster accountability, and protect your community with quick reports.</p>
+    <div class="grid">
+      <a class="button" href="report.html">🚧 Report a Hazard</a>
+      <a class="button" href="map.html">🗺️ View Hazard Map</a>
+    </div>
+  </section>
+
+  <!-- Stats Section (Bigger Boxes) -->
+  <section class="card stats">
+    <h3>📊 Live Statistics</h3>
+    <div class="grid big-boxes">
+      <div class="stat-card">
+        <h3 id="statTotal">-</h3>
+        <p>Total Reports</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="statResolved">-</h3>
+        <p>Resolved Issues</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="statActive">-</h3>
+        <p>Active Hazards</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="card" id="howItWorks">
+    <h3>⚙️ How RoadResQ Works</h3>
+    <div class="grid steps">
+      <div class="step">
+        <h4>1️⃣ Report</h4>
+        <p>Citizens report road hazards with description, photo, and GPS location.</p>
+      </div>
+      <div class="step">
+        <h4>2️⃣ Review</h4>
+        <p>Authorities or admins verify and mark hazards as <b>In Progress</b>.</p>
+      </div>
+      <div class="step">
+        <h4>3️⃣ Resolve</h4>
+        <p>Once fixed, the hazard status updates to <b>Resolved</b> — visible on the map.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Reports Section -->
+  <section class="card" id="recent">
+    <h3>🆕 Recent Reports</h3>
+    <div id="recentList" class="grid"></div>
+  </section>
+
+  <!-- Join Us Banner -->
+  <section class="join-banner">
+    <h2>Join the Road Safety Revolution 🚦</h2>
+    <p>Together, we can make roads safer and smarter. Start by reporting a hazard today.</p>
+    <a href="report.html" class="button">Report Now</a>
+  </section>
+</main>
+
+  <footer class="container footer">
+    RoadResQ · Built for citizen safety · © 2025
+  </footer>
+<script src="js/theme.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/config.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>
+
+

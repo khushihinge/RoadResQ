@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Hazard - RoadResQ</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <header class="container">
+    <div class="brand"><span class="brand-badge"></span>RoadResQ</div>
+    <nav>
+      <button id="navToggle" class="nav-toggle">☰</button>
+      <div id="navLinks" class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="report.html" class="active">Report</a>
+        <a href="map.html">Map</a>
+        <a href="admin.html">Admin</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <form id="reportForm" class="card" enctype="multipart/form-data">
+      <div class="grid">
+        <label>
+          <span>Category</span>
+          <select name="category" required>
+            <option value="pothole">Pothole</option>
+            <option value="drain">Open Drain</option>
+            <option value="streetlight">Broken Streetlight</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <label>
+          <span>Severity</span>
+          <select name="severity">
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        <span>Description</span>
+        <textarea name="description" rows="4" required placeholder="Describe the issue..."></textarea>
+      </label>
+
+      <label>
+        <span>Photo (optional)</span>
+        <input id="imageInput" type="file" name="image" accept="image/*" />
+        <img id="imagePreview" style="display:none;max-width:180px;margin-top:8px;border-radius:8px;border:1px solid var(--border)" />
+      </label>
+
+      <div class="card">
+        <div id="pickMap" style="height:300px;width:100%;"></div>
+        <small class="muted">Tip: Drag or click to set your location.</small>
+      </div>
+
+      <div class="grid">
+        <label>
+          <span>Latitude</span>
+          <input id="lat" name="latitude" type="text" readonly required />
+        </label>
+        <label>
+          <span>Longitude</span>
+          <input id="lng" name="longitude" type="text" readonly required />
+        </label>
+      </div>
+
+      <button class="button" type="submit">Submit Report</button>
+      <p id="statusMsg"></p>
+    </form>
+  </main>
+
+  <footer class="container footer">
+    RoadResQ · Built for citizen safety · © 2025
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <script>
+    // 🗺️ Initialize Leaflet Map
+    let map = L.map("pickMap").setView([18.5204, 73.8567], 13); // Default Pune coords
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    let marker = L.marker([18.5204, 73.8567], { draggable: true }).addTo(map);
+
+    function updateLatLng(lat, lng) {
+      document.getElementById("lat").value = lat.toFixed(6);
+      document.getElementById("lng").value = lng.toFixed(6);
+    }
+
+    // Update when marker dragged
+    marker.on("dragend", (e) => {
+      let pos = e.target.getLatLng();
+      updateLatLng(pos.lat, pos.lng);
+    });
+
+    // Update when map clicked
+    map.on("click", (e) => {
+      marker.setLatLng(e.latlng);
+      updateLatLng(e.latlng.lat, e.latlng.lng);
+    });
+
+    // Try to auto-detect user location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const { latitude, longitude } = pos.coords;
+        map.setView([latitude, longitude], 15);
+        marker.setLatLng([latitude, longitude]);
+        updateLatLng(latitude, longitude);
+      });
+    }
+
+    // 🖼️ Image Preview
+    const imageInput = document.getElementById("imageInput");
+    const imagePreview = document.getElementById("imagePreview");
+    imageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        imagePreview.src = URL.createObjectURL(file);
+        imagePreview.style.display = "block";
+      } else {
+        imagePreview.style.display = "none";
+      }
+    });
+
+    // 🧾 Form submission
+    document.getElementById("reportForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+
+      try {
+        const response = await fetch("http://localhost:5000/api/hazard/report", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          alert("✅ Hazard reported successfully!");
+          e.target.reset();
+          imagePreview.style.display = "none";
+        } else {
+          const error = await response.json();
+          alert("❌ Error: " + (error.error || "Something went wrong"));
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        alert("⚠️ Server not responding. Make sure the backend is running.");
+      }
+    });
+  </script>
+</body>
+</html>
