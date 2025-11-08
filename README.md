@@ -13,7 +13,3 @@
 - **Authentication:** JWT  
 - **Map:** OpenStreetMap (Leaflet)
 
-## 🚀 Setup Instructions
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/<your-username>/RoadResQ.git
